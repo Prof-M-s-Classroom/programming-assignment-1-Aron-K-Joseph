@@ -40,9 +40,9 @@ template <typename T> class SpaceRoute {
             tail = nullptr;
             length = 0;
         };  // Constructor
-        // ~SpaceRoute() {
-        //
-        // }; // Destructor
+        ~SpaceRoute() {
+
+        }; // Destructor
 
         void addWaypointAtBeginning(T& data) {
             Node<T>* newNode = new Node(data);
@@ -57,6 +57,7 @@ template <typename T> class SpaceRoute {
                 newNode->next = head;
                 head = newNode;
             }
+            //change to length
             length++;
         }
         void addWaypointAtEnd(T& data){
@@ -96,23 +97,131 @@ template <typename T> class SpaceRoute {
             length++;
         }
     };
-        void removeWaypointAtBeginning();
-        void removeWaypointAtEnd();
-        void removeWaypointAtIndex(int index);
-        void traverseForward();
-        void traverseBackward();
-        Node<T>* getWaypoint(int index);
-        void setWaypoint(int index, T& data);
+        void removeWaypointAtBeginning() {
+            if (length == 0) {
+                cout<<"There are currently no Waypoints"<<endl;
+            }
+            //need to check if there is a waypoint
+            else if (length == 1) {
+                delete head;
+                head = nullptr;
+                tail = nullptr;
+                length--;
+                //not only we have to delete the head but the head and tail
+                //pointe must be reassigned
+            }
+            else {
+                head = head->next;
+                delete head->prev;
+                head->prev = nullptr;
+                length--;
+            }
+        };
+        void removeWaypointAtEnd() {
+            if (length == 0) {
+                cout<<"There are currently no Waypoints"<<endl;
+            }
+            else if (length == 1) {
+                delete tail;
+                head = nullptr;
+                tail = nullptr;
+                length--;
+            }
+            else {
+                tail = tail->prev;
+                delete tail->next;
+                tail->next = nullptr;
+                length--;
+            }
+        };
+        void removeWaypointAtIndex(int index) {
+            //need to check if it is a valid index
+            if ((index < 0) || (index > (length-1))) {
+                cout <<"Invalid Index"<< endl;
+            }
+            else if (index == 0) {
+                removeWaypointAtBeginning();
+            }
+            else if (index == length-1) {
+                removeWaypointAtEnd();
+            }
+            else {
+                Node<T>* curr = head;
+                for (int i = 0; i< index; i++) {
+                    curr = curr -> next;
+                }
+                //We need a temporary pointer in order to still have access to the node to be deleted
+                Node<T>* temp = curr;
+                curr = curr->prev;
+                curr->next = curr->next->next;
+                curr = curr->next;
+                curr->prev = curr->prev->prev;
+                delete temp;
+                length--;
+            }
+        };
+        void traverseForward(){
+            if(length == 0){
+                cout<<"No waypoints in route"<<endl;
+            }
+            else{
+                Node<T>* currNode = head;
+                while(currNode != nullptr){
+                    currNode->print();
+                    currNode = currNode->next;
+                }
+                cout<<"\n"<<endl;
+            }
+
+
+        };
+
+
+
+        void traverseBackward(){
+            if(length == 0){
+                cout<<"No waypoints in route"<<endl;
+            }
+            else{
+                Node<T>* currNode = tail;
+                while(currNode != nullptr){
+                    currNode->print();
+                    currNode = currNode->prev;
+                }
+                cout<<"\n"<<endl;
+            }
+        }
+        Node<T>* getWaypoint(int index){
+            if(index < 0 || index >= length) {
+                return nullptr;
+            }
+            else{
+                Node<T>* currNode = head;
+                for(int i = 0;i < index; i++){
+                    currNode = currNode->next;
+                }
+                return currNode;
+            }
+        };
+        void setWaypoint(int index, T& data){
+            if(index < 0 || index >= length){
+                cout<<"Invalid Input"<<endl;
+            }
+            else{
+                removeWaypointAtIndex(index);
+                addWaypointAtIndex(index,data);
+
+            }
+        };
         void print(){
 
                 Node<T>* current = head;
-            cout<<"Printing..."<<endl;
+                cout<<"Printing..."<<endl;
                 while (current) {
                     current->print();
                     current = current->next;
                 }
                 cout << endl;
         }
-
 };
 
